@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <title>KHJAI-49324</title>
+    <!-- CTFUA{f12hy_******_*****_********} -->
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: black;
+        height: 100vh;
+      }
+      
+      img {
+        max-width: 100%;
+      }
+      
+      </style>
+    <body>
+        <img src="{{ url_for('static', filename='camera.gif') }}"  alt="Camera feed">
+    </body>
+    <!-- Watermark -->
+    <div style="position: fixed; bottom: 0; right: 0; padding: 10px; font-size: 10px; color: #fff; background: #000; opacity: 0.5;">
+        <a href="https://github.com/FishyVentures/" target="_blank" style="color: #fff;">By FishyVentures
+        </a>
+</html>

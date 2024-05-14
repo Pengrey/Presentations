@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  camera2ip:
+    image: gen2brain/cam2ip # on RPi use gen2brain/cam2ip:arm
+    expose:
+      - 56000
+    devices:
+      - /dev/video0:/dev/video0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.camera2ip.rule=Host(`dlinkcam`)"
+
+  flask:
+    build: ./flask
+    container_name: flask
+    restart: always
+    environment:
+      - APP_NAME=WebView
+    expose:
+      - 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flask.rule=Host(`dlinkcam`) && PathPrefix(`/admin`)"
+  
+  reverse-proxy:
+    image: traefik
+    # Enables the web UI and tells Traefik to listen to docker
+    command: 
+      #- "--api.insecure=true" # DONT
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      #- "8080:8080"             # DONT
+    depends_on:
+      - flask
+      - camera2ip
+    labels:
+      - "traefik.http.routers.traefik.tls=true"
